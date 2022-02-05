@@ -29,8 +29,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	_ = yamlHandler // TODO
+
 	fmt.Println("Starting the server on :8080")
-	http.ListenAndServe(":8080", yamlHandler)
+	http.ListenAndServe(":8080", mapHandler)
 }
 
 func defaultMux() *http.ServeMux {
@@ -40,5 +42,5 @@ func defaultMux() *http.ServeMux {
 }
 
 func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello, world!")
+	fmt.Fprintln(w, "Hello, world! This is the default route handler.")
 }
