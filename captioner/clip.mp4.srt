@@ -1,0 +1,160 @@
+1
+00:00:00,070 --> 00:00:05,154
+The second value like
+
+2
+00:00:05,192 --> 00:00:08,022
+that. And then the third one we need to add is a CNAME record.
+
+3
+00:00:08,096 --> 00:00:11,718
+So we just need to go to C name. It needs
+
+4
+00:00:11,804 --> 00:00:16,182
+a www as the host and
+
+5
+00:00:16,196 --> 00:00:19,266
+we just post that in there like that. We're going to save changes.
+
+6
+00:00:19,448 --> 00:00:22,966
+So currently these are the three records needed for web flow.
+
+7
+00:00:23,038 --> 00:00:26,766
+Now if you have already done your Facebook prep you will also
+
+8
+00:00:26,828 --> 00:00:30,810
+have a Facebook verification encode in here which will be a.
+
+9
+00:00:30,860 --> 00:00:35,658
+Txt record. It will look a little like that and
+
+10
+00:00:35,684 --> 00:00:38,502
+then you'll have your I believe it does use an app and then you'll have
+
+11
+00:00:38,516 --> 00:00:41,970
+a Facebook verification code which will be something like Facebook
+
+12
+00:00:44,930 --> 00:00:48,102
+verification equals and then it
+
+13
+00:00:48,116 --> 00:00:50,982
+will be a string of numbers like that. You can get this from Facebook and
+
+14
+00:00:50,996 --> 00:00:54,330
+I would advise if you haven't done this already, you will need to do it
+
+15
+00:00:54,440 --> 00:00:57,078
+because we need the Pixel code that you'd have made from that training as well.
+
+16
+00:00:57,104 --> 00:01:00,342
+So I do recommend going back and doing the Facebook prep if you've got
+
+17
+00:01:00,356 --> 00:01:02,862
+to this point so far, I'm just going to cancel that because I don't need
+
+18
+00:01:02,876 --> 00:01:06,102
+to add that record. So once we've got these three records added now these can
+
+19
+00:01:06,116 --> 00:01:08,430
+take a little bit of time to propagate.
+
+20
+00:01:09,290 --> 00:01:13,014
+It can take up to 72 hours to propagate but that is very
+
+21
+00:01:13,112 --> 00:01:16,758
+uncommon. You will notice here I'm going to go
+
+22
+00:01:16,784 --> 00:01:20,566
+back into web flow and on these two things. Now I need to check status
+
+23
+00:01:20,698 --> 00:01:23,958
+and as you can see mine has already gone through. So that's the first one
+
+24
+00:01:23,984 --> 00:01:26,382
+done. Then we're going to hit check status on the second one and there we
+
+25
+00:01:26,396 --> 00:01:30,282
+go is done. So now this domain is completely added and
+
+26
+00:01:30,296 --> 00:01:33,846
+that's what I mean is generally most domains will happen almost
+
+27
+00:01:33,908 --> 00:01:38,062
+instantaneously depending on the host you're using. The reason we recommend Name Cheap
+
+28
+00:01:38,086 --> 00:01:41,902
+is because it is a very good host. It is very fast, but if you're
+
+29
+00:01:41,926 --> 00:01:45,922
+using something like GoDaddy or whatever it can take longer and it is recommended
+
+30
+00:01:45,946 --> 00:01:48,798
+like an industry standard that it can take all the way up to 72 hours
+
+31
+00:01:48,884 --> 00:01:52,494
+but it is fairly rare. So once that's done
+
+32
+00:01:52,592 --> 00:01:55,758
+and we've made the www default, we're going to head over to the
+
+33
+00:01:55,784 --> 00:01:59,658
+editor settings. Now inside Editor We don't really need to do
+
+34
+00:01:59,684 --> 00:02:02,898
+anything. What you can do change is you can change the logo here to
+
+35
+00:02:02,924 --> 00:02:06,142
+your company, but it doesn't really matter because you're not really going to be handing
+
+36
+00:02:06,166 --> 00:02:09,882
+out your editor status at all anyway. Inside Billing is
+
+37
+00:02:09,896 --> 00:02:12,798
+where you'll see all your billing so you can keep up to date on how
+
+38
+00:02:12,824 --> 00:02:16,218
+it's working and what subscriptions is where you cancel through site Plan upgrade your site
+
+39
+00:02:16,244 --> 00:02:20,130
+plan it's fine. Past invoices Inside SEO
+
+40
+00:02:20,630 --> 00:02:20,880
+what.
+
