@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -37,67 +38,62 @@ func main() {
 	var responses map[string]interface{}
 
 	// Make HTTP request to upload file.
-	// res := requestEndpoint(client, "POST", UPLOAD_ENDPOINT, false, bytes.NewBuffer(fileData))
-	// updateResponses(*res, &responses)
+	uploadRes := requestEndpoint(client, "POST", UPLOAD_ENDPOINT, false, bytes.NewBuffer(fileData))
+	parseJsonResp(*uploadRes, &responses)
 
-	// fileUrl := responses["upload_url"]
-	// fileEndpoint, ok := fileUrl.(string)
-	// if !ok {
-	// 	log.Fatalln("file endpoint is not of type string")
-	// }
-	// fmt.Println("File is uploaded to ", fileEndpoint)
+	fileUrl := responses["upload_url"]
+	fileEndpoint, ok := fileUrl.(string)
+	if !ok {
+		log.Fatalln("file endpoint is not of type string")
+	}
+	fmt.Println("File uploaded to ", fileEndpoint)
 
-	// // Construct JSON object to send to transcription API.
-	// sendData := map[string]string{"audio_url": fileEndpoint}
-	// sendDataJson, err := json.Marshal(sendData)
-	// if err != nil {
-	// 	log.Fatalln("error marshalling data to be sent into json: ", err)
-	// }
+	// Construct JSON object to send to transcription API.
+	sendData := map[string]string{"audio_url": fileEndpoint}
+	sendDataJson, err := json.Marshal(sendData)
+	if err != nil {
+		log.Fatalln("error marshalling data to be sent into json: ", err)
+	}
 
 	// Make HTTP request to initiate transcription and get id.
-	// res = requestEndpoint(client, "POST", TRANSCRIPT_ENDPOINT, true, bytes.NewBuffer(sendDataJson))
-	// updateResponses(*res, &responses)
+	transcriptCreateRes := requestEndpoint(client, "POST", TRANSCRIPT_ENDPOINT, true, bytes.NewBuffer(sendDataJson))
+	parseJsonResp(*transcriptCreateRes, &responses)
 
-	// id := responses["id"]
-	// idString, ok := id.(string)
-	// if !ok {
-	// 	log.Fatalln("transcription id is not a string")
-	// }
-	// fmt.Println("Transcription succeeded - id is: ", id)
+	id := responses["id"]
+	idString, ok := id.(string)
+	if !ok {
+		log.Fatalln("transcription id is not a string")
+	}
+	fmt.Println("Transcription succeeded - id is: ", id)
 
 	// Make HTTP request to get transcription text.
-	STATUS_POLLING_URL := TRANSCRIPT_ENDPOINT + "/" + "ogfuflk54l-ec9f-48b6-b9c6-b8278e23eeac" // idString  TODO reinstate
-	_ = fileData                                                                               // TODO remove
-
+	STATUS_POLLING_URL := TRANSCRIPT_ENDPOINT + "/" + idString
 	done := false
 	for !done {
-		res := requestEndpoint(client, "GET", STATUS_POLLING_URL, false, nil)
+		pollingRes := requestEndpoint(client, "GET", STATUS_POLLING_URL, false, nil)
+		parseJsonResp(*pollingRes, &responses)
 
+		// Check that status is not nil.
 		status, ok := responses["status"].(string)
 		if !ok {
 			fmt.Printf("Status field value is: %v\n", responses["status"])
 		}
 
-		fmt.Printf("ZUBIN the res status is : %v\n", status)
-
-		status = "completed" // TODO reemove
-
 		if status == "completed" {
 			done = true
-			parseJsonResp(*res, &responses)
 			break
 		}
 		// Processing not complete.
-		fmt.Println("Transcription not complete. Trying again in 1 minute...")
-		time.Sleep(1 * time.Second)
-		// time.Sleep(1 * time.Minute) // TODO reinstate
+		pollInterval := 30 * time.Second
+		fmt.Println("Transcription not complete. Trying again in 1 minute...", pollInterval.String())
+		time.Sleep(pollInterval) // TODO:  settle on time
 	}
 
 	// Get the SRT text.
-	SRT_ENDPOINT := TRANSCRIPT_ENDPOINT + "/" + "ogfuflk54l-ec9f-48b6-b9c6-b8278e23eeac" + "/" + "srt" //   TODO replace with idString
-	res := requestEndpoint(client, "GET", SRT_ENDPOINT, false, nil)
-	defer res.Body.Close()
-	body, err := io.ReadAll(res.Body)
+	SRT_ENDPOINT := TRANSCRIPT_ENDPOINT + "/" + idString + "/" + "srt"
+	srtRes := requestEndpoint(client, "GET", SRT_ENDPOINT, false, nil)
+	defer srtRes.Body.Close()
+	body, err := io.ReadAll(srtRes.Body)
 	if err != nil {
 		log.Fatalf("error reading SRT text from response: ", err)
 	}
@@ -129,7 +125,7 @@ func getFilePathFromUser() string {
 }
 
 func requestEndpoint(client *http.Client, method, url string, contentTypeJson bool, body io.Reader) *http.Response {
-	fmt.Printf("making %s request to %s\n", method, url)
+	log.Default().Printf("making %s request to %s\n", method, url)
 	API_KEY := getApiKey("API_KEY")
 
 	// Construct request to the endpoint.
@@ -157,7 +153,7 @@ func requestEndpoint(client *http.Client, method, url string, contentTypeJson bo
 	return res
 }
 
-// Takes the given http responses and decodes it's JSON into the the responses map pointer.
+// Takes http JSON responses and parses it into the responses map pointer.
 func parseJsonResp(res http.Response, responses *map[string]interface{}) {
 	if err := json.NewDecoder(res.Body).Decode(responses); err != nil {
 		log.Fatalln("error decoding result to JSON: ", err)
@@ -167,14 +163,10 @@ func parseJsonResp(res http.Response, responses *map[string]interface{}) {
 	if resps["error"] != nil {
 		log.Fatalln("error string found in responses: ", resps["error"])
 	}
-
-	fmt.Printf("Just updated responses with %v", prettyPrintMap(*responses))
 }
 
 func writeSrtFile(transcribedFilePath, srtData string) {
 	dir, sourceFile := filepath.Split(transcribedFilePath)
-	fmt.Printf("REMOVE ME:  %s", dir+sourceFile+".srt") // TODO remove
-
 	f, err := os.Create(dir + sourceFile + ".srt")
 	if err != nil {
 		log.Fatalln("error creating srt file: ", err)
