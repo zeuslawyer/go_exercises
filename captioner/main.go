@@ -70,6 +70,11 @@ func main() {
 	STATUS_POLLING_URL := TRANSCRIPT_ENDPOINT + "/" + idString
 	done := false
 	for !done {
+		// Sleep before hitting endpoint as transcription is a LRO.
+		pollInterval := 30 * time.Second // TODO:  settle on time
+		fmt.Printf("Transcription not complete yet. Trying again in %s...", pollInterval.String())
+		time.Sleep(pollInterval)
+
 		pollingRes := requestEndpoint(client, "GET", STATUS_POLLING_URL, false, nil)
 		parseJsonResp(*pollingRes, &responses)
 
@@ -84,9 +89,6 @@ func main() {
 			break
 		}
 		// Processing not complete.
-		pollInterval := 30 * time.Second
-		fmt.Println("Transcription not complete. Trying again in 1 minute...", pollInterval.String())
-		time.Sleep(pollInterval) // TODO:  settle on time
 	}
 
 	// Get the SRT text.
@@ -120,6 +122,7 @@ func prettyPrintMap(m map[string]interface{}) string {
 	return string(s)
 }
 
+// TODO get file path via user output
 func getFilePathFromUser() string {
 	return "/Users/zubinpratap/Downloads/clip.mp4"
 }
