@@ -95,9 +95,10 @@ func main() {
 	SRT_ENDPOINT := TRANSCRIPT_ENDPOINT + "/" + idString + "/" + "srt"
 	srtRes := requestEndpoint(client, "GET", SRT_ENDPOINT, false, nil)
 	defer srtRes.Body.Close()
+
 	body, err := io.ReadAll(srtRes.Body)
 	if err != nil {
-		log.Fatalf("error reading SRT text from response: ", err)
+		log.Fatal("error reading SRT text from response: ", err)
 	}
 
 	fmt.Println("Here is the transcribed text: ", string(body))
